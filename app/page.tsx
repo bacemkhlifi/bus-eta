@@ -1,369 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { Locale } from "./data";
+import { catalogLines, corridors, schedules } from "./data";
+import { arrivalOffset, currentDayMinute, kmOptions, nextDepartures, timeFromMinutes } from "./eta";
 
-type Locale = "fr" | "ar";
 type View = "estimate" | "lines" | "kilometers" | "sources";
-
-type TerminalKey = "kasba" | "babDjebli" | "karia";
-
-type CatalogLine = {
-  code: string;
-  nameFr: string;
-  nameAr: string;
-  terminal: TerminalKey;
-  terminalFr: string;
-  terminalAr: string;
-};
-
-type Corridor = {
-  id: string;
-  nameFr: string;
-  nameAr: string;
-  directionFr: string;
-  directionAr: string;
-  terminal: TerminalKey;
-  lines: string[];
-  maxKm: number;
-  minutesPerKm: number;
-  centerExitMinutes: number;
-  reliability: "ready" | "needsOfficialImport";
-};
-
-const terminalLabels = {
-  kasba: { fr: "Gare El Kasba", ar: "محطة القصبة" },
-  babDjebli: { fr: "Gare Beb Djebli", ar: "محطة باب الجبلي" },
-  karia: { fr: "Gare El Karia", ar: "محطة القارية" },
-};
-
-const catalogLines: CatalogLine[] = [
-  ["1", "El Bousten", "البوستن", "kasba"],
-  ["2", "Hached", "هاشد", "kasba"],
-  ["3", "Sidi Mansour", "سيدي منصور", "karia"],
-  ["4", "Saltnia", "سلطنية", "karia"],
-  ["5", "Sakiet Eddayer", "ساقية الدائر", "karia"],
-  ["5A", "Rached", "راشد", "karia"],
-  ["6", "Sakiet Ezzit", "ساقية الزيت", "karia"],
-  ["6A", "El Wed", "الواد", "karia"],
-  ["7", "Teniour", "التنيور", "babDjebli"],
-  ["8", "Kaid M'hammad", "قايد محمد", "babDjebli"],
-  ["9", "Gremda", "قرمدة", "babDjebli"],
-  ["10", "El Afrane", "الأفران", "babDjebli"],
-  ["11", "Kassasat", "قصاصات", "babDjebli"],
-  ["12", "El Ain", "العين", "babDjebli"],
-  ["13", "Chaker", "شاكر", "kasba"],
-  ["13A", "Boumarra", "بومرة", "kasba"],
-  ["14", "Aeroport", "المطار", "kasba"],
-  ["14A", "Hajeb", "الحاجب", "kasba"],
-  ["14B", "Essghar", "الصغار", "kasba"],
-  ["15", "Soukra", "سكرة", "kasba"],
-  ["16", "Thyna", "طينة", "kasba"],
-  ["16A", "Thyna ouest", "طينة الغربية", "kasba"],
-  ["16B", "Route Gabes", "طريق قابس", "kasba"],
-  ["16D", "Sidi Salem", "سيدي سالم", "kasba"],
-  ["17", "Port de peche", "ميناء الصيد", "babDjebli"],
-  ["18", "M'harza", "المحرزة", "kasba"],
-  ["18A", "M'harza ouest", "المحرزة الغربية", "kasba"],
-  ["20", "Ziadi", "الزيادي", "karia"],
-  ["22", "Bouali", "البوعلي", "karia"],
-  ["23", "Bouzaien", "البوزيان", "kasba"],
-  ["24", "Facultes", "الكليات", "babDjebli"],
-  ["25", "Technopole", "التكنوبول", "karia"],
-  ["30", "Monji Slim", "المنجي سليم", "karia"],
-].map(([code, nameFr, nameAr, terminal]) => ({
-  code,
-  nameFr,
-  nameAr,
-  terminal: terminal as TerminalKey,
-  terminalFr: terminalLabels[terminal as TerminalKey].fr,
-  terminalAr: terminalLabels[terminal as TerminalKey].ar,
-}));
-
-const corridors: Corridor[] = [
-  {
-    id: "el-bousten-hached",
-    nameFr: "El Bousten / Hached",
-    nameAr: "البوستن / هاشد",
-    directionFr: "vers El Bousten et Hached",
-    directionAr: "نحو البوستن وهاشد",
-    terminal: "kasba",
-    lines: ["1", "2"],
-    maxKm: 7,
-    minutesPerKm: 3,
-    centerExitMinutes: 3,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "route-gabes-thyna",
-    nameFr: "Route Gabes / Thyna",
-    nameAr: "طريق قابس / طينة",
-    directionFr: "vers Thyna, Route Gabes et Gabes",
-    directionAr: "نحو طينة وطريق قابس وقابس",
-    terminal: "kasba",
-    lines: ["16", "16A", "16B", "16D"],
-    maxKm: 12,
-    minutesPerKm: 3.4,
-    centerExitMinutes: 4,
-    reliability: "ready",
-  },
-  {
-    id: "mharza",
-    nameFr: "M'harza",
-    nameAr: "المحرزة",
-    directionFr: "vers M'harza et Sfax ouest",
-    directionAr: "نحو المحرزة وصفاقس الغربية",
-    terminal: "kasba",
-    lines: ["18", "18A"],
-    maxKm: 8,
-    minutesPerKm: 3.2,
-    centerExitMinutes: 5,
-    reliability: "ready",
-  },
-  {
-    id: "chaker-boumarra",
-    nameFr: "Chaker / Boumarra",
-    nameAr: "شاكر / بومرة",
-    directionFr: "vers Sfax sud, Chaker et Boumarra",
-    directionAr: "نحو صفاقس الجنوبية وشاكر وبومرة",
-    terminal: "kasba",
-    lines: ["13", "13A"],
-    maxKm: 10,
-    minutesPerKm: 3.2,
-    centerExitMinutes: 4,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "soukra",
-    nameFr: "Soukra",
-    nameAr: "سكرة",
-    directionFr: "vers Soukra",
-    directionAr: "نحو سكرة",
-    terminal: "kasba",
-    lines: ["15"],
-    maxKm: 7,
-    minutesPerKm: 3.1,
-    centerExitMinutes: 4,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "bouzaien",
-    nameFr: "Bouzaien",
-    nameAr: "البوزيان",
-    directionFr: "vers Bouzaien",
-    directionAr: "نحو البوزيان",
-    terminal: "kasba",
-    lines: ["23"],
-    maxKm: 8,
-    minutesPerKm: 3.2,
-    centerExitMinutes: 4,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "route-gremda",
-    nameFr: "Route Gremda",
-    nameAr: "طريق قرمدة",
-    directionFr: "vers Gremda",
-    directionAr: "نحو قرمدة",
-    terminal: "babDjebli",
-    lines: ["9"],
-    maxKm: 9,
-    minutesPerKm: 3.1,
-    centerExitMinutes: 3,
-    reliability: "ready",
-  },
-  {
-    id: "teniour-kaid",
-    nameFr: "Teniour / Kaid M'hammad",
-    nameAr: "التنيور / قايد محمد",
-    directionFr: "vers Teniour et Kaid M'hammad",
-    directionAr: "نحو التنيور وقايد محمد",
-    terminal: "babDjebli",
-    lines: ["7", "8"],
-    maxKm: 8,
-    minutesPerKm: 3.2,
-    centerExitMinutes: 3,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "el-afrane-kassasat",
-    nameFr: "El Afrane / Kassasat",
-    nameAr: "الأفران / قصاصات",
-    directionFr: "vers El Afrane et Kassasat",
-    directionAr: "نحو الأفران وقصاصات",
-    terminal: "babDjebli",
-    lines: ["10", "11"],
-    maxKm: 9,
-    minutesPerKm: 3.3,
-    centerExitMinutes: 3,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "el-ain",
-    nameFr: "El Ain",
-    nameAr: "العين",
-    directionFr: "vers El Ain",
-    directionAr: "نحو العين",
-    terminal: "babDjebli",
-    lines: ["12"],
-    maxKm: 9,
-    minutesPerKm: 3.2,
-    centerExitMinutes: 3,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "port-peche",
-    nameFr: "Port de peche",
-    nameAr: "ميناء الصيد",
-    directionFr: "vers port de peche",
-    directionAr: "نحو ميناء الصيد",
-    terminal: "babDjebli",
-    lines: ["17"],
-    maxKm: 5,
-    minutesPerKm: 3,
-    centerExitMinutes: 2,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "sakiet-ezzit",
-    nameFr: "Sakiet Ezzit",
-    nameAr: "ساقية الزيت",
-    directionFr: "vers Sakiet Ezzit et Tunis",
-    directionAr: "نحو ساقية الزيت وتونس",
-    terminal: "karia",
-    lines: ["6", "6A", "30"],
-    maxKm: 11,
-    minutesPerKm: 3,
-    centerExitMinutes: 4,
-    reliability: "ready",
-  },
-  {
-    id: "sidi-mansour",
-    nameFr: "Sidi Mansour",
-    nameAr: "سيدي منصور",
-    directionFr: "vers Sidi Mansour et littoral est",
-    directionAr: "نحو سيدي منصور والساحل الشرقي",
-    terminal: "karia",
-    lines: ["3"],
-    maxKm: 12,
-    minutesPerKm: 3.4,
-    centerExitMinutes: 4,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "saltnia",
-    nameFr: "Saltnia",
-    nameAr: "سلطنية",
-    directionFr: "vers Saltnia",
-    directionAr: "نحو سلطنية",
-    terminal: "karia",
-    lines: ["4"],
-    maxKm: 12,
-    minutesPerKm: 3.4,
-    centerExitMinutes: 4,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "sakiet-eddaier",
-    nameFr: "Sakiet Eddaier",
-    nameAr: "ساقية الدائر",
-    directionFr: "vers Sakiet Eddaier",
-    directionAr: "نحو ساقية الدائر",
-    terminal: "karia",
-    lines: ["5", "5A", "22"],
-    maxKm: 10,
-    minutesPerKm: 3.1,
-    centerExitMinutes: 4,
-    reliability: "ready",
-  },
-  {
-    id: "ziadi",
-    nameFr: "Ziadi",
-    nameAr: "الزيادي",
-    directionFr: "vers Ziadi",
-    directionAr: "نحو الزيادي",
-    terminal: "karia",
-    lines: ["20"],
-    maxKm: 8,
-    minutesPerKm: 3.1,
-    centerExitMinutes: 4,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "monji-slim",
-    nameFr: "Monji Slim",
-    nameAr: "المنجي سليم",
-    directionFr: "vers Monji Slim",
-    directionAr: "نحو المنجي سليم",
-    terminal: "karia",
-    lines: ["30"],
-    maxKm: 8,
-    minutesPerKm: 3.1,
-    centerExitMinutes: 4,
-    reliability: "needsOfficialImport",
-  },
-  {
-    id: "facultes-technopole",
-    nameFr: "Facultes / Technopole",
-    nameAr: "الكليات / التكنوبول",
-    directionFr: "vers campus et technopole",
-    directionAr: "نحو الكليات والتكنوبول",
-    terminal: "babDjebli",
-    lines: ["24", "25"],
-    maxKm: 9,
-    minutesPerKm: 3.5,
-    centerExitMinutes: 5,
-    reliability: "ready",
-  },
-  {
-    id: "aeroport",
-    nameFr: "Aeroport",
-    nameAr: "المطار",
-    directionFr: "vers Aeroport Sfax-Thyna",
-    directionAr: "نحو مطار صفاقس طينة",
-    terminal: "kasba",
-    lines: ["14", "14A", "14B"],
-    maxKm: 8,
-    minutesPerKm: 3.6,
-    centerExitMinutes: 4,
-    reliability: "ready",
-  },
-];
-
-const schedules: Record<string, { first: string; last: string; frequency: number }> = {
-  "1": { first: "05:35", last: "21:40", frequency: 15 },
-  "2": { first: "05:40", last: "21:30", frequency: 16 },
-  "3": { first: "05:50", last: "20:50", frequency: 24 },
-  "4": { first: "05:45", last: "21:00", frequency: 22 },
-  "5": { first: "05:35", last: "21:35", frequency: 15 },
-  "5A": { first: "06:00", last: "20:45", frequency: 28 },
-  "6": { first: "05:30", last: "21:45", frequency: 12 },
-  "6A": { first: "05:55", last: "21:10", frequency: 22 },
-  "7": { first: "05:45", last: "21:20", frequency: 18 },
-  "8": { first: "05:45", last: "21:00", frequency: 19 },
-  "9": { first: "05:30", last: "21:50", frequency: 16 },
-  "10": { first: "05:50", last: "20:50", frequency: 24 },
-  "11": { first: "06:00", last: "20:30", frequency: 25 },
-  "12": { first: "05:50", last: "21:00", frequency: 23 },
-  "13": { first: "05:40", last: "21:25", frequency: 20 },
-  "13A": { first: "06:05", last: "20:40", frequency: 28 },
-  "14": { first: "06:00", last: "20:40", frequency: 24 },
-  "14A": { first: "06:10", last: "20:20", frequency: 30 },
-  "14B": { first: "06:15", last: "20:00", frequency: 34 },
-  "15": { first: "05:50", last: "21:15", frequency: 20 },
-  "16": { first: "05:45", last: "21:25", frequency: 18 },
-  "16A": { first: "05:55", last: "21:00", frequency: 24 },
-  "16B": { first: "06:05", last: "20:55", frequency: 26 },
-  "16D": { first: "06:05", last: "20:45", frequency: 30 },
-  "17": { first: "05:55", last: "20:30", frequency: 22 },
-  "18": { first: "05:35", last: "21:25", frequency: 18 },
-  "18A": { first: "05:55", last: "20:50", frequency: 28 },
-  "20": { first: "06:00", last: "20:40", frequency: 25 },
-  "22": { first: "06:10", last: "20:20", frequency: 28 },
-  "23": { first: "05:50", last: "21:05", frequency: 22 },
-  "24": { first: "06:10", last: "19:40", frequency: 20 },
-  "25": { first: "06:15", last: "19:50", frequency: 24 },
-  "30": { first: "05:55", last: "21:10", frequency: 22 },
-};
 
 const copy = {
   fr: {
@@ -395,6 +37,8 @@ const copy = {
     noLine: "Choisissez d'abord une zone qui contient ce code bus.",
     kmTableTitle: "Arrivees par tranche de 0.5 km",
     sourceTitle: "Pourquoi cette version est plus fiable",
+    verifiedPilot: "verifie pilote",
+    estimatedPilot: "estime pilote",
     sourceItems: [
       "Le choix par dropdown evite les erreurs de saisie.",
       "Le repere kilometrique remplace les stations manquantes.",
@@ -434,6 +78,8 @@ const copy = {
     noLine: "اختر منطقة تحتوي هذا رقم الحافلة أولا.",
     kmTableTitle: "أوقات الوصول كل 0.5 كلم",
     sourceTitle: "لماذا هذه النسخة أكثر موثوقية",
+    verifiedPilot: "مؤكد للتجربة",
+    estimatedPilot: "تقديري للتجربة",
     sourceItems: [
       "الاختيار بالقوائم يقلل أخطاء الكتابة.",
       "النقطة الكيلومترية تعوض المحطات غير المؤكدة.",
@@ -445,47 +91,6 @@ const copy = {
     limitation: "نسخة تجريبية: التواتر الحالي فرضيات تشغيلية ويجب تعويضها باستيراد سوريتراس الرسمي.",
   },
 };
-
-function minutesFromTime(time: string) {
-  const [hours, minutes] = time.split(":").map(Number);
-  return hours * 60 + minutes;
-}
-
-function timeFromMinutes(value: number) {
-  const minutes = ((value % 1440) + 1440) % 1440;
-  return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
-}
-
-function kmOptions(maxKm: number) {
-  const values: number[] = [];
-  for (let km = 0; km <= maxKm; km += 0.5) {
-    values.push(Number(km.toFixed(1)));
-  }
-  return values;
-}
-
-function arrivalOffset(corridor: Corridor, km: number) {
-  return Math.round(corridor.centerExitMinutes + km * corridor.minutesPerKm);
-}
-
-function nextDepartures(lineCode: string, count = 3) {
-  const schedule = schedules[lineCode];
-  const now = new Date();
-  const nowMinutes = now.getHours() * 60 + now.getMinutes();
-  const first = minutesFromTime(schedule.first);
-  const last = minutesFromTime(schedule.last);
-  let next = first;
-
-  if (nowMinutes > first) {
-    next = first + Math.ceil((nowMinutes - first) / schedule.frequency) * schedule.frequency;
-  }
-
-  if (next > last) {
-    next = first + 1440;
-  }
-
-  return Array.from({ length: count }, (_, index) => next + index * schedule.frequency);
-}
 
 function name(locale: Locale, fr: string, ar: string) {
   return locale === "ar" ? ar : fr;
@@ -511,7 +116,7 @@ export default function Home() {
     return nextDepartures(activeLineCode).map((departure) => ({
       departure: timeFromMinutes(departure),
       arrival: timeFromMinutes(departure + offset),
-      eta: departure + offset - (new Date().getHours() * 60 + new Date().getMinutes()),
+      eta: departure + offset - currentDayMinute(),
     }));
   }, [activeLineCode, offset]);
 
@@ -589,6 +194,7 @@ export default function Home() {
           <aside className="eta-panel">
             <span className="panel-kicker">{t.nextArrivals}</span>
             <div className="line-badge">{t.line} {activeLineCode}</div>
+            <span className={`reliability ${activeCorridor.reliability}`}>{t[activeCorridor.reliability]}</span>
             <h3>{arrivals[0].eta} {t.minutes}</h3>
             <p>{name(locale, activeCorridor.nameFr, activeCorridor.nameAr)} Km {clampedKm}</p>
             <dl>

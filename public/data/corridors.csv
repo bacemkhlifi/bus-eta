@@ -1,0 +1,20 @@
+corridor_id,name_fr,name_ar,direction_fr,direction_ar,terminal,line_codes,max_km,minutes_per_km,center_exit_minutes,reliability
+el-bousten-hached,El Bousten / Hached,البوستن / هاشد,vers El Bousten et Hached,نحو البوستن وهاشد,kasba,1|2,7,3,3,estimatedPilot
+route-gabes-thyna,Route Gabes / Thyna,طريق قابس / طينة,vers Thyna Route Gabes et Gabes,نحو طينة وطريق قابس وقابس,kasba,16|16A|16B|16D,12,3.4,4,verifiedPilot
+mharza,M'harza,المحرزة,vers M'harza et Sfax ouest,نحو المحرزة وصفاقس الغربية,kasba,18|18A,8,3.2,5,verifiedPilot
+chaker-boumarra,Chaker / Boumarra,شاكر / بومرة,vers Sfax sud Chaker et Boumarra,نحو صفاقس الجنوبية وشاكر وبومرة,kasba,13|13A,10,3.2,4,estimatedPilot
+soukra,Soukra,سكرة,vers Soukra,نحو سكرة,kasba,15,7,3.1,4,estimatedPilot
+bouzaien,Bouzaien,البوزيان,vers Bouzaien,نحو البوزيان,kasba,23,8,3.2,4,estimatedPilot
+route-gremda,Route Gremda,طريق قرمدة,vers Gremda,نحو قرمدة,babDjebli,9,9,3.1,3,verifiedPilot
+teniour-kaid,Teniour / Kaid M'hammad,التنيور / قايد محمد,vers Teniour et Kaid M'hammad,نحو التنيور وقايد محمد,babDjebli,7|8,8,3.2,3,estimatedPilot
+el-afrane-kassasat,El Afrane / Kassasat,الأفران / قصاصات,vers El Afrane et Kassasat,نحو الأفران وقصاصات,babDjebli,10|11,9,3.3,3,estimatedPilot
+el-ain,El Ain,العين,vers El Ain,نحو العين,babDjebli,12,9,3.2,3,estimatedPilot
+port-peche,Port de peche,ميناء الصيد,vers port de peche,نحو ميناء الصيد,babDjebli,17,5,3,2,estimatedPilot
+sakiet-ezzit,Sakiet Ezzit,ساقية الزيت,vers Sakiet Ezzit et Tunis,نحو ساقية الزيت وتونس,karia,6|6A|30,11,3,4,verifiedPilot
+sidi-mansour,Sidi Mansour,سيدي منصور,vers Sidi Mansour et littoral est,نحو سيدي منصور والساحل الشرقي,karia,3,12,3.4,4,estimatedPilot
+saltnia,Saltnia,سلطنية,vers Saltnia,نحو سلطنية,karia,4,12,3.4,4,estimatedPilot
+sakiet-eddaier,Sakiet Eddaier,ساقية الدائر,vers Sakiet Eddaier,نحو ساقية الدائر,karia,5|5A|22,10,3.1,4,verifiedPilot
+ziadi,Ziadi,الزيادي,vers Ziadi,نحو الزيادي,karia,20,8,3.1,4,estimatedPilot
+monji-slim,Monji Slim,المنجي سليم,vers Monji Slim,نحو المنجي سليم,karia,30,8,3.1,4,estimatedPilot
+facultes-technopole,Facultes / Technopole,الكليات / التكنوبول,vers campus et technopole,نحو الكليات والتكنوبول,babDjebli,24|25,9,3.5,5,verifiedPilot
+aeroport,Aeroport,المطار,vers Aeroport Sfax-Thyna,نحو مطار صفاقس طينة,kasba,14|14A|14B,8,3.6,4,verifiedPilot

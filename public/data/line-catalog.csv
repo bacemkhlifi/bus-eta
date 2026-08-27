@@ -1,0 +1,34 @@
+line_code,name_fr,name_ar,terminal
+1,El Bousten,البوستن,kasba
+2,Hached,هاشد,kasba
+3,Sidi Mansour,سيدي منصور,karia
+4,Saltnia,سلطنية,karia
+5,Sakiet Eddayer,ساقية الدائر,karia
+5A,Rached,راشد,karia
+6,Sakiet Ezzit,ساقية الزيت,karia
+6A,El Wed,الواد,karia
+7,Teniour,التنيور,babDjebli
+8,Kaid M'hammad,قايد محمد,babDjebli
+9,Gremda,قرمدة,babDjebli
+10,El Afrane,الأفران,babDjebli
+11,Kassasat,قصاصات,babDjebli
+12,El Ain,العين,babDjebli
+13,Chaker,شاكر,kasba
+13A,Boumarra,بومرة,kasba
+14,Aeroport,المطار,kasba
+14A,Hajeb,الحاجب,kasba
+14B,Essghar,الصغار,kasba
+15,Soukra,سكرة,kasba
+16,Thyna,طينة,kasba
+16A,Thyna ouest,طينة الغربية,kasba
+16B,Route Gabes,طريق قابس,kasba
+16D,Sidi Salem,سيدي سالم,kasba
+17,Port de peche,ميناء الصيد,babDjebli
+18,M'harza,المحرزة,kasba
+18A,M'harza ouest,المحرزة الغربية,kasba
+20,Ziadi,الزيادي,karia
+22,Bouali,البوعلي,karia
+23,Bouzaien,البوزيان,kasba
+24,Facultes,الكليات,babDjebli
+25,Technopole,التكنوبول,karia
+30,Monji Slim,المنجي سليم,karia

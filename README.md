@@ -77,6 +77,7 @@ The pilot uses the first three parts. Later versions should add traffic, user re
 ```bash
 npm install
 npm run dev
+npm run data:generate
 npm run build
 npm run build:netlify
 ```
@@ -92,3 +93,14 @@ Netlify settings:
 - Node version: `24`
 
 The Netlify build uses Next static export, so the app can be hosted as a public static site.
+
+## Data Workflow
+
+Editable pilot data lives in `public/data/`:
+
+- `line-catalog.csv`
+- `corridors.csv`
+- `line-schedules.csv`
+- `km-points.csv`
+
+Run `npm run data:generate` after changing corridor distance or speed assumptions. The app source currently imports typed data from `app/data.ts`; the CSV files are the admin-friendly database format and should become the source for the next importer step.

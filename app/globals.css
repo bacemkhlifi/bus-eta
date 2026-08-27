@@ -204,6 +204,25 @@ select {
   padding: 10px 13px;
 }
 
+.reliability {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.82rem;
+  font-weight: 900;
+  margin-inline-start: 8px;
+  padding: 8px 11px;
+}
+
+.reliability.verifiedPilot {
+  background: #e4f4ee;
+  color: #12644f;
+}
+
+.reliability.estimatedPilot {
+  background: #fff5d8;
+  color: #80550f;
+}
+
 .eta-panel h3 {
   font-size: clamp(3rem, 9vw, 6rem);
   line-height: 0.9;
