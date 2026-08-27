@@ -1,6 +1,8 @@
 import type { Corridor } from "./data";
 import { schedules } from "./data";
 
+export type Direction = "outbound" | "inbound";
+
 export function minutesFromTime(time: string) {
   const [hours, minutes] = time.split(":").map(Number);
   return hours * 60 + minutes;
@@ -19,8 +21,9 @@ export function kmOptions(maxKm: number) {
   return values;
 }
 
-export function arrivalOffset(corridor: Corridor, km: number) {
-  return Math.round(corridor.centerExitMinutes + km * corridor.minutesPerKm);
+export function arrivalOffset(corridor: Corridor, km: number, direction: Direction) {
+  const distanceFromStart = direction === "outbound" ? km : corridor.maxKm - km;
+  return Math.max(0, Math.round(corridor.centerExitMinutes + distanceFromStart * corridor.minutesPerKm));
 }
 
 export function nextDepartures(lineCode: string, count = 3) {

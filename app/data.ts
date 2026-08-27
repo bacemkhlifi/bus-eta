@@ -18,6 +18,8 @@ export type Corridor = {
   directionFr: string;
   directionAr: string;
   terminal: TerminalKey;
+  endFr: string;
+  endAr: string;
   lines: string[];
   maxKm: number;
   minutesPerKm: number;
@@ -81,25 +83,25 @@ export const catalogLines: CatalogLine[] = [
 }));
 
 export const corridors: Corridor[] = [
-  corridor("el-bousten-hached", "El Bousten / Hached", "البوستن / هاشد", "vers El Bousten et Hached", "نحو البوستن وهاشد", "kasba", ["1", "2"], 7, 3, 3, "estimatedPilot"),
-  corridor("route-gabes-thyna", "Route Gabes / Thyna", "طريق قابس / طينة", "vers Thyna, Route Gabes et Gabes", "نحو طينة وطريق قابس وقابس", "kasba", ["16", "16A", "16B", "16D"], 12, 3.4, 4, "verifiedPilot"),
-  corridor("mharza", "M'harza", "المحرزة", "vers M'harza et Sfax ouest", "نحو المحرزة وصفاقس الغربية", "kasba", ["18", "18A"], 8, 3.2, 5, "verifiedPilot"),
-  corridor("chaker-boumarra", "Chaker / Boumarra", "شاكر / بومرة", "vers Sfax sud, Chaker et Boumarra", "نحو صفاقس الجنوبية وشاكر وبومرة", "kasba", ["13", "13A"], 10, 3.2, 4, "estimatedPilot"),
-  corridor("soukra", "Soukra", "سكرة", "vers Soukra", "نحو سكرة", "kasba", ["15"], 7, 3.1, 4, "estimatedPilot"),
-  corridor("bouzaien", "Bouzaien", "البوزيان", "vers Bouzaien", "نحو البوزيان", "kasba", ["23"], 8, 3.2, 4, "estimatedPilot"),
-  corridor("route-gremda", "Route Gremda", "طريق قرمدة", "vers Gremda", "نحو قرمدة", "babDjebli", ["9"], 9, 3.1, 3, "verifiedPilot"),
-  corridor("teniour-kaid", "Teniour / Kaid M'hammad", "التنيور / قايد محمد", "vers Teniour et Kaid M'hammad", "نحو التنيور وقايد محمد", "babDjebli", ["7", "8"], 8, 3.2, 3, "estimatedPilot"),
-  corridor("el-afrane-kassasat", "El Afrane / Kassasat", "الأفران / قصاصات", "vers El Afrane et Kassasat", "نحو الأفران وقصاصات", "babDjebli", ["10", "11"], 9, 3.3, 3, "estimatedPilot"),
-  corridor("el-ain", "El Ain", "العين", "vers El Ain", "نحو العين", "babDjebli", ["12"], 9, 3.2, 3, "estimatedPilot"),
-  corridor("port-peche", "Port de peche", "ميناء الصيد", "vers port de peche", "نحو ميناء الصيد", "babDjebli", ["17"], 5, 3, 2, "estimatedPilot"),
-  corridor("sakiet-ezzit", "Sakiet Ezzit", "ساقية الزيت", "vers Sakiet Ezzit et Tunis", "نحو ساقية الزيت وتونس", "karia", ["6", "6A", "30"], 11, 3, 4, "verifiedPilot"),
-  corridor("sidi-mansour", "Sidi Mansour", "سيدي منصور", "vers Sidi Mansour et littoral est", "نحو سيدي منصور والساحل الشرقي", "karia", ["3"], 12, 3.4, 4, "estimatedPilot"),
-  corridor("saltnia", "Saltnia", "سلطنية", "vers Saltnia", "نحو سلطنية", "karia", ["4"], 12, 3.4, 4, "estimatedPilot"),
-  corridor("sakiet-eddaier", "Sakiet Eddaier", "ساقية الدائر", "vers Sakiet Eddaier", "نحو ساقية الدائر", "karia", ["5", "5A", "22"], 10, 3.1, 4, "verifiedPilot"),
-  corridor("ziadi", "Ziadi", "الزيادي", "vers Ziadi", "نحو الزيادي", "karia", ["20"], 8, 3.1, 4, "estimatedPilot"),
-  corridor("monji-slim", "Monji Slim", "المنجي سليم", "vers Monji Slim", "نحو المنجي سليم", "karia", ["30"], 8, 3.1, 4, "estimatedPilot"),
-  corridor("facultes-technopole", "Facultes / Technopole", "الكليات / التكنوبول", "vers campus et technopole", "نحو الكليات والتكنوبول", "babDjebli", ["24", "25"], 9, 3.5, 5, "verifiedPilot"),
-  corridor("aeroport", "Aeroport", "المطار", "vers Aeroport Sfax-Thyna", "نحو مطار صفاقس طينة", "kasba", ["14", "14A", "14B"], 8, 3.6, 4, "verifiedPilot"),
+  corridor("el-bousten-hached", "El Bousten / Hached", "البوستن / هاشد", "vers El Bousten et Hached", "نحو البوستن وهاشد", "kasba", "El Bousten / Hached", "البوستن / هاشد", ["1", "2"], 7, 3, 3, "estimatedPilot"),
+  corridor("route-gabes-thyna", "Route Gabes / Thyna", "طريق قابس / طينة", "vers Thyna, Route Gabes et Gabes", "نحو طينة وطريق قابس وقابس", "kasba", "Thyna / Route Gabes", "طينة / طريق قابس", ["16", "16A", "16B", "16D"], 12, 3.4, 4, "verifiedPilot"),
+  corridor("mharza", "M'harza", "المحرزة", "vers M'harza et Sfax ouest", "نحو المحرزة وصفاقس الغربية", "kasba", "M'harza", "المحرزة", ["18", "18A"], 8, 3.2, 5, "verifiedPilot"),
+  corridor("chaker-boumarra", "Chaker / Boumarra", "شاكر / بومرة", "vers Sfax sud, Chaker et Boumarra", "نحو صفاقس الجنوبية وشاكر وبومرة", "kasba", "Chaker / Boumarra", "شاكر / بومرة", ["13", "13A"], 10, 3.2, 4, "estimatedPilot"),
+  corridor("soukra", "Soukra", "سكرة", "vers Soukra", "نحو سكرة", "kasba", "Soukra", "سكرة", ["15"], 7, 3.1, 4, "estimatedPilot"),
+  corridor("bouzaien", "Bouzaien", "البوزيان", "vers Bouzaien", "نحو البوزيان", "kasba", "Bouzaien", "البوزيان", ["23"], 8, 3.2, 4, "estimatedPilot"),
+  corridor("route-gremda", "Route Gremda", "طريق قرمدة", "vers Gremda", "نحو قرمدة", "babDjebli", "Gremda", "قرمدة", ["9"], 9, 3.1, 3, "verifiedPilot"),
+  corridor("teniour-kaid", "Teniour / Kaid M'hammad", "التنيور / قايد محمد", "vers Teniour et Kaid M'hammad", "نحو التنيور وقايد محمد", "babDjebli", "Teniour / Kaid M'hammad", "التنيور / قايد محمد", ["7", "8"], 8, 3.2, 3, "estimatedPilot"),
+  corridor("el-afrane-kassasat", "El Afrane / Kassasat", "الأفران / قصاصات", "vers El Afrane et Kassasat", "نحو الأفران وقصاصات", "babDjebli", "El Afrane / Kassasat", "الأفران / قصاصات", ["10", "11"], 9, 3.3, 3, "estimatedPilot"),
+  corridor("el-ain", "El Ain", "العين", "vers El Ain", "نحو العين", "babDjebli", "El Ain", "العين", ["12"], 9, 3.2, 3, "estimatedPilot"),
+  corridor("port-peche", "Port de peche", "ميناء الصيد", "vers port de peche", "نحو ميناء الصيد", "babDjebli", "Port de peche", "ميناء الصيد", ["17"], 5, 3, 2, "estimatedPilot"),
+  corridor("sakiet-ezzit", "Sakiet Ezzit", "ساقية الزيت", "vers Sakiet Ezzit et Tunis", "نحو ساقية الزيت وتونس", "karia", "Sakiet Ezzit", "ساقية الزيت", ["6", "6A", "30"], 11, 3, 4, "verifiedPilot"),
+  corridor("sidi-mansour", "Sidi Mansour", "سيدي منصور", "vers Sidi Mansour et littoral est", "نحو سيدي منصور والساحل الشرقي", "karia", "Sidi Mansour", "سيدي منصور", ["3"], 12, 3.4, 4, "estimatedPilot"),
+  corridor("saltnia", "Saltnia", "سلطنية", "vers Saltnia", "نحو سلطنية", "karia", "Saltnia", "سلطنية", ["4"], 12, 3.4, 4, "estimatedPilot"),
+  corridor("sakiet-eddaier", "Sakiet Eddaier", "ساقية الدائر", "vers Sakiet Eddaier", "نحو ساقية الدائر", "karia", "Sakiet Eddaier", "ساقية الدائر", ["5", "5A", "22"], 10, 3.1, 4, "verifiedPilot"),
+  corridor("ziadi", "Ziadi", "الزيادي", "vers Ziadi", "نحو الزيادي", "karia", "Ziadi", "الزيادي", ["20"], 8, 3.1, 4, "estimatedPilot"),
+  corridor("monji-slim", "Monji Slim", "المنجي سليم", "vers Monji Slim", "نحو المنجي سليم", "karia", "Monji Slim", "المنجي سليم", ["30"], 8, 3.1, 4, "estimatedPilot"),
+  corridor("facultes-technopole", "Facultes / Technopole", "الكليات / التكنوبول", "vers campus et technopole", "نحو الكليات والتكنوبول", "babDjebli", "Facultes / Technopole", "الكليات / التكنوبول", ["24", "25"], 9, 3.5, 5, "verifiedPilot"),
+  corridor("aeroport", "Aeroport", "المطار", "vers Aeroport Sfax-Thyna", "نحو مطار صفاقس طينة", "kasba", "Aeroport Sfax-Thyna", "مطار صفاقس طينة", ["14", "14A", "14B"], 8, 3.6, 4, "verifiedPilot"),
 ];
 
 export const schedules: Record<string, LineSchedule> = {
@@ -145,11 +147,13 @@ function corridor(
   directionFr: string,
   directionAr: string,
   terminal: TerminalKey,
+  endFr: string,
+  endAr: string,
   lines: string[],
   maxKm: number,
   minutesPerKm: number,
   centerExitMinutes: number,
   reliability: Reliability,
 ): Corridor {
-  return { id, nameFr, nameAr, directionFr, directionAr, terminal, lines, maxKm, minutesPerKm, centerExitMinutes, reliability };
+  return { id, nameFr, nameAr, directionFr, directionAr, terminal, endFr, endAr, lines, maxKm, minutesPerKm, centerExitMinutes, reliability };
 }

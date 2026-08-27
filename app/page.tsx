@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { Locale } from "./data";
 import { catalogLines, corridors, schedules } from "./data";
+import type { Direction } from "./eta";
 import { arrivalOffset, currentDayMinute, kmOptions, nextDepartures, timeFromMinutes } from "./eta";
 
 type View = "estimate" | "lines" | "kilometers" | "sources";
@@ -15,6 +16,9 @@ const copy = {
     intro: "Quand les stations ne sont pas visibles, l'application estime par repere kilometrique: Km 4, Km 4.5, Km 5. C'est simple, rapide, et transparent.",
     tabs: { estimate: "Estimer", lines: "Lignes", kilometers: "Table km", sources: "Confiance" },
     region: "Zone / couloir",
+    sense: "Sens",
+    outbound: "Ville vers destination",
+    inbound: "Destination vers ville",
     line: "Code bus",
     kmPoint: "Repere kilometrique",
     nextArrivals: "Prochains passages",
@@ -23,6 +27,8 @@ const copy = {
     inMinutes: "dans",
     minutes: "min",
     terminal: "Terminus",
+    startTerminus: "Depart de",
+    endTerminus: "Arrive vers",
     direction: "Direction",
     method: "Methode",
     methodText: "Horaire de depart + sortie centre + temps moyen par kilometre. Les valeurs peuvent etre ajustees apres observation terrain.",
@@ -42,6 +48,7 @@ const copy = {
     sourceItems: [
       "Le choix par dropdown evite les erreurs de saisie.",
       "Le repere kilometrique remplace les stations manquantes.",
+      "Le sens indique clairement si le bus va de la ville vers la destination ou revient vers la ville.",
       "Chaque ETA indique le depart theorique et l'arrivee calculee.",
       "Les 31 codes urbains visibles sur la carte sont disponibles.",
       "La methode reste auditable avant une integration GPS.",
@@ -56,6 +63,9 @@ const copy = {
     intro: "عندما لا تكون المحطات واضحة، يعتمد التطبيق على العلامة الكيلومترية: كلم 4، كلم 4.5، كلم 5. بسيط، سريع وشفاف.",
     tabs: { estimate: "التقدير", lines: "الخطوط", kilometers: "جدول كلم", sources: "الثقة" },
     region: "المنطقة / المسار",
+    sense: "الاتجاه",
+    outbound: "من المدينة إلى الوجهة",
+    inbound: "من الوجهة إلى المدينة",
     line: "رقم الحافلة",
     kmPoint: "النقطة الكيلومترية",
     nextArrivals: "المرورات القادمة",
@@ -64,6 +74,8 @@ const copy = {
     inMinutes: "بعد",
     minutes: "دق",
     terminal: "المحطة الرئيسية",
+    startTerminus: "ينطلق من",
+    endTerminus: "يصل نحو",
     direction: "الاتجاه",
     method: "الطريقة",
     methodText: "وقت الانطلاق + الخروج من المركز + متوسط الوقت لكل كيلومتر. يمكن تعديل القيم بعد الملاحظة الميدانية.",
@@ -83,6 +95,7 @@ const copy = {
     sourceItems: [
       "الاختيار بالقوائم يقلل أخطاء الكتابة.",
       "النقطة الكيلومترية تعوض المحطات غير المؤكدة.",
+      "الاتجاه يوضح هل الحافلة من المدينة إلى الوجهة أو عائدة إلى المدينة.",
       "كل تقدير يوضح الانطلاق النظري والوصول المحسوب.",
       "كل أرقام الخطوط الحضرية الظاهرة في الخريطة موجودة.",
       "طريقة الحساب قابلة للتدقيق قبل إضافة GPS.",
@@ -100,6 +113,7 @@ export default function Home() {
   const [locale, setLocale] = useState<Locale>("fr");
   const [view, setView] = useState<View>("estimate");
   const [corridorId, setCorridorId] = useState(corridors[0].id);
+  const [direction, setDirection] = useState<Direction>("outbound");
   const activeCorridor = corridors.find((corridor) => corridor.id === corridorId) ?? corridors[0];
   const [lineCode, setLineCode] = useState(activeCorridor.lines[0]);
   const [km, setKm] = useState(6);
@@ -110,7 +124,11 @@ export default function Home() {
   const activeLine = catalogLines.find((line) => line.code === activeLineCode) ?? catalogLines[0];
   const activeSchedule = schedules[activeLineCode];
   const clampedKm = Math.min(km, activeCorridor.maxKm);
-  const offset = arrivalOffset(activeCorridor, clampedKm);
+  const offset = arrivalOffset(activeCorridor, clampedKm, direction);
+  const cityTerminus = name(locale, activeLine.terminalFr, activeLine.terminalAr);
+  const endTerminus = name(locale, activeCorridor.endFr, activeCorridor.endAr);
+  const startTerminus = direction === "outbound" ? cityTerminus : endTerminus;
+  const arrivalTerminus = direction === "outbound" ? endTerminus : cityTerminus;
 
   const arrivals = useMemo(() => {
     return nextDepartures(activeLineCode).map((departure) => ({
@@ -123,7 +141,7 @@ export default function Home() {
   const kmRows = useMemo(() => {
     const firstDeparture = nextDepartures(activeLineCode, 1)[0];
     return kmOptions(activeCorridor.maxKm).map((value) => {
-      const rowOffset = arrivalOffset(activeCorridor, value);
+      const rowOffset = arrivalOffset(activeCorridor, value, direction);
       return {
         km: value,
         labelFr: `${activeCorridor.nameFr} Km ${value}`,
@@ -132,7 +150,7 @@ export default function Home() {
         arrival: timeFromMinutes(firstDeparture + rowOffset),
       };
     });
-  }, [activeCorridor, activeLineCode]);
+  }, [activeCorridor, activeLineCode, direction]);
 
   function changeCorridor(nextId: string) {
     const next = corridors.find((corridor) => corridor.id === nextId) ?? corridors[0];
@@ -172,6 +190,13 @@ export default function Home() {
                 </select>
               </label>
               <label>
+                <span>{t.sense}</span>
+                <select value={direction} onChange={(event) => setDirection(event.target.value as Direction)}>
+                  <option value="outbound">{t.outbound}</option>
+                  <option value="inbound">{t.inbound}</option>
+                </select>
+              </label>
+              <label>
                 <span>{t.line}</span>
                 <select value={activeLineCode} onChange={(event) => setLineCode(event.target.value)}>
                   {activeCorridor.lines.map((code) => {
@@ -200,7 +225,8 @@ export default function Home() {
             <dl>
               <div><dt>{t.startsAt}</dt><dd>{arrivals[0].departure}</dd></div>
               <div><dt>{t.arrivesAt}</dt><dd>{arrivals[0].arrival}</dd></div>
-              <div><dt>{t.terminal}</dt><dd>{name(locale, activeLine.terminalFr, activeLine.terminalAr)}</dd></div>
+              <div><dt>{t.startTerminus}</dt><dd>{startTerminus}</dd></div>
+              <div><dt>{t.endTerminus}</dt><dd>{arrivalTerminus}</dd></div>
               <div><dt>{t.frequency}</dt><dd>{activeSchedule.frequency} {t.minutes}</dd></div>
             </dl>
             <ol className="mini-arrivals">
@@ -231,6 +257,10 @@ export default function Home() {
             <aside className="plan-panel">
               <h2>{t.method}</h2>
               <p>{t.methodText}</p>
+              <dl>
+                <div><dt>{t.sense}</dt><dd>{`${startTerminus} -> ${arrivalTerminus}`}</dd></div>
+                <div><dt>{t.terminal}</dt><dd>A: {cityTerminus} / B: {endTerminus}</dd></div>
+              </dl>
               <p className="basis">{t.limitation}</p>
             </aside>
           </section>
