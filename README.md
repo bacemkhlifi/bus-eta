@@ -2,34 +2,34 @@
 
 Bus Sfax ETA is a bilingual French/Arabic web application for estimating SORETRAS bus arrival times in Sfax.
 
-## MVP Goal
+## Product Goal
 
-The first version estimates arrivals without GPS by combining:
+The app estimates arrivals without GPS by combining:
 
 1. Official trip schedules.
 2. Ordered route stops.
-3. Average travel time between stops.
+3. Kilometer markers when station names are not reliable enough.
 4. A confidence level that tells users whether the estimate is schedule-only or improved by fresher data.
 
-## Current First Slice
+## Current Ready-To-Use Pilot
 
 - French and Arabic language switch.
-- Station and line search.
-- Full urban line code catalog for 31 SORETRAS bus lines.
-- Detailed POC records for Sfax lines: 16, 14, 9, and 24.
-- Example station support such as Route Gabes Km 6.
-- Schedule-based next-arrival calculation.
-- Arrival board, bus-code catalog, station directory, and POC readiness view.
-- Data quality labels that separate detailed seed records from catalog-only records.
+- Dropdown flow: choose corridor/region, choose bus code, choose the nearest 0.5 km marker.
+- Full urban line code catalog for the 31+ bus codes visible in the available network map.
+- Kilometer estimator for major corridors including Route Gabes, M'harza, Route Gremda, Sakiet Ezzit, Sakiet Eddaier, Facultes/Technopole, and Aeroport.
+- Next three expected arrivals for the chosen kilometer marker.
+- Kilometer table showing arrival estimates every 0.5 km.
+- Reference network map included in the interface.
+- Transparent method and limitation notes.
 
-The seeded data is only a development model. It must be replaced with normalized SORETRAS open-data imports before launch.
+The app is usable as a pilot estimator. Frequencies and travel speeds are operational assumptions until replaced with normalized SORETRAS open-data imports and field observations.
 
-## POC Readiness Checklist
+## Pilot Readiness Checklist
 
-- Search by station, area, Arabic name, French name, or line code.
-- Show available stations and stations that still need verified coordinates.
-- Show each line's origin station, corridor, first departure, last departure, frequency, and ordered stops when available.
-- Keep ETA confidence visible to users.
+- User does not need to know the exact station name.
+- Every 0.5 km can produce an ETA.
+- Dropdowns reduce spelling and Arabic/French input errors.
+- Each result shows theoretical departure and calculated arrival.
 - Preserve a clear upgrade path from schedule-only ETA to traffic-aware ETA, user reports, and GPS.
 
 ## Data Sources To Import
@@ -55,11 +55,12 @@ The seeded data is only a development model. It must be replaced with normalized
 ```txt
 estimated arrival =
 scheduled departure
-+ planned offset from start station
++ center exit time
++ kilometer marker * average minutes per km
 + traffic or historical delay adjustment
 ```
 
-MVP uses the first two parts. Later versions should add traffic, user reports, and live vehicle location.
+The pilot uses the first three parts. Later versions should add traffic, user reports, and live vehicle location.
 
 ## Development Phases
 
