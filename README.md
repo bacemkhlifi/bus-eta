@@ -15,12 +15,22 @@ The first version estimates arrivals without GPS by combining:
 
 - French and Arabic language switch.
 - Station and line search.
-- Seeded Sfax lines: 16, 14, 9, and 24.
+- Full urban line code catalog for 31 SORETRAS bus lines.
+- Detailed POC records for Sfax lines: 16, 14, 9, and 24.
 - Example station support such as Route Gabes Km 6.
 - Schedule-based next-arrival calculation.
-- Product roadmap panel.
+- Arrival board, bus-code catalog, station directory, and POC readiness view.
+- Data quality labels that separate detailed seed records from catalog-only records.
 
 The seeded data is only a development model. It must be replaced with normalized SORETRAS open-data imports before launch.
+
+## POC Readiness Checklist
+
+- Search by station, area, Arabic name, French name, or line code.
+- Show available stations and stations that still need verified coordinates.
+- Show each line's origin station, corridor, first departure, last departure, frequency, and ordered stops when available.
+- Keep ETA confidence visible to users.
+- Preserve a clear upgrade path from schedule-only ETA to traffic-aware ETA, user reports, and GPS.
 
 ## Data Sources To Import
 
